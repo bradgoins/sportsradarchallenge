@@ -23,4 +23,10 @@ app.listen(port, async () => {
     // run migrations
     await migrate({client}, "migrations");
 
+    scheduleFeed.process();
 });
+
+// https://statsapi.web.nhl.com/api/v1/seasons
+// https://statsapi.web.nhl.com/api/v1/seasons/current
+// https://statsapi.web.nhl.com/api/v1/schedule?season=20222023
+// https://statsapi.web.nhl.com/api/v1/game/2022030175/boxscore
