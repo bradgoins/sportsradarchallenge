@@ -20,5 +20,7 @@ app.listen(port, async () => {
     // connect to database;
     await client.connect();
 
+    // run migrations
+    await migrate({client}, "migrations");
 
 });
