@@ -10,7 +10,13 @@ const getSeasonDates = async(season) => {
 }
 
 const checkGames = async (games) => {
-    // do something with games
+    
+    const promises = [];
+    games.forEach( (game) => {
+        promises.push(gameFeed.process(game));
+    })
+
+    await Promise.all(promises);
 }
 
 const monitorSeasonFeed = async (season) => {
