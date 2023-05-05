@@ -21,7 +21,7 @@ const checkGames = async (games) => {
 
 const monitorSeasonFeed = async (season) => {
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setUTCHours(0);
 
     const seasonDates = await getSeasonDates(season);
 
@@ -30,23 +30,26 @@ const monitorSeasonFeed = async (season) => {
         if(gameDay <= today){
             await checkGames(seasonDates[i].games)
         }else {
-            await pauseUntilDate(gameDate);
+            await pauseUntilDate(gameDay, today);
             await checkGames(seasonDates[i].games)
         }
     }
 }
 
-const pauseUntilDate = async (gameDay) => {
-    return new Promise(resolve => setTimeout(resolve, Math.abs(gameDay - new Date())))
+const pauseUntilDate = async (gameDay, today) => {
+    return new Promise(resolve => {
+        setTimeout(resolve, Math.abs(gameDay - new Date()))
+    })
 }
-
 const process = async (season) => {
 
     if(!season){
         season = await getCurrentSeason();
     }
-
-    monitorSeasonFeed(season);
+    
+    return await monitorSeasonFeed(season);
 }
 
-module.exports = { process }
+module.exports = { 
+    process
+}
