@@ -4,4 +4,5 @@ CREATE TABLE IF NOT EXISTS players (
     name VARCHAR(255),
     number VARCHAR(255),
     age INT
-)
+);
+CREATE INDEX player_id ON players(player_id)
