@@ -13,21 +13,21 @@ const upsertPlayers = async(team) => {
 
 const updatePlayer = async (player) => {
     return await client.query(`UPDATE players SET name=$2, number=$3, age=$4
-    WHERE game_pk=$1 AND player_id=$3`, [
+    WHERE player_id=$1`, [
         player.person.id,
-        player.person.name,
-        player.person.number,
-        player.person.age
+        player.person.fullName,
+        player.jerseyNumber,
+        player.person.currentAge
     ])
 }
 
 const insertPlayer = async (player) => {
     return await client.query(`INSERT INTO players (player_id, name, number, age) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
+        VALUES ($1, $2, $3, $4)`, [
             player.person.id,
-            player.person.name,
-            player.person.number,
-            player.person.age
+            player.person.fullName,
+            player.jerseyNumber,
+            player.person.currentAge
         ])
 }
 

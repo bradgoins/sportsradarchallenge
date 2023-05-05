@@ -7,7 +7,7 @@ const upsertTeam = async(gameData) =>  {
 }
 
 const updateTeam = async(gameData) => {
-    return await client.query(`UPDATE teams SET team_name=$34 WHERE team_id=$1`,
+    return await client.query(`UPDATE teams SET team_name=$2 WHERE team_id=$1`,
         [gameData?.team?.id, gameData?.team?.name]);
 }
 
