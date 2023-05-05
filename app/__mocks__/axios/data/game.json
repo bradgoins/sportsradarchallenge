@@ -1,0 +1,52 @@
+{
+  "gamePk" : 2021010031,
+  "link" : "/api/v1/game/2021010031/feed/live",
+  "gameType" : "PR",
+  "season" : "20212022",
+  "gameDate" : "2021-09-30T02:00:00Z",
+  "status" : {
+    "abstractGameState" : "Final",
+    "codedGameState" : "6",
+    "detailedState" : "Final",
+    "statusCode" : "6",
+    "startTimeTBD" : false
+  },
+  "teams" : {
+    "away" : {
+      "leagueRecord" : {
+        "wins" : 2,
+        "losses" : 0,
+        "ot" : 0,
+        "type" : "league"
+      },
+      "score" : 4,
+      "team" : {
+        "id" : 53,
+        "name" : "Arizona Coyotes",
+        "link" : "/api/v1/teams/53"
+      }
+    },
+    "home" : {
+      "leagueRecord" : {
+        "wins" : 1,
+        "losses" : 1,
+        "ot" : 0,
+        "type" : "league"
+      },
+      "score" : 1,
+      "team" : {
+        "id" : 24,
+        "name" : "Anaheim Ducks",
+        "link" : "/api/v1/teams/24"
+      }
+    }
+  },
+  "venue" : {
+    "id" : 5046,
+    "name" : "Honda Center",
+    "link" : "/api/v1/venues/5046"
+  },
+  "content" : {
+    "link" : "/api/v1/game/2021010031/content"
+  }
+}
