@@ -1,20 +1,20 @@
 const client = require('../db_client');
 
-const upsertPlayers = async(game, team) => {
+const upsertStats = async(game, team) => {
     for(let player in team?.players){
         //update player game stats
-        if((await updatePlayer(game, team, team.players[player])).rowCount === 0) {
-            await insertPlayer(game, team, team.players[player]);
+        if((await updateStats(game, team, team.players[player])).rowCount === 0) {
+            await insertStats(game, team, team.players[player]);
         }
     }
 
     return;
 }
 
-const updatePlayer = async (game, team, player) => {
+const updateStats = async (game, team, player) => {
     return await client.query(`UPDATE player_game_stats SET game_pk=$1, team_id=$2, player_id=$3, position=$4, assists=$5, goals=$6, hits=$7, points=$8, penalty_minutes=$9
     WHERE game_pk=$1 AND player_id=$3`, [
-        game.gamePk,
+        game.game.pk,
         team.team.id,
         player.person.id,
         player.position.name,
@@ -26,10 +26,10 @@ const updatePlayer = async (game, team, player) => {
     ])
 }
 
-const insertPlayer = async (game, team, player) => {
+const insertStats = async (game, team, player) => {
     return await client.query(`INSERT INTO player_game_stats (game_pk, team_id, player_id, position, assists, goals, hits, points, penalty_minutes) 
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
-            game.gamePk,
+            game.game.pk,
             team.team.id,
             player?.person?.id,
             player?.position?.name,
@@ -42,5 +42,5 @@ const insertPlayer = async (game, team, player) => {
 }
 
 module.exports = { 
-    upsertPlayers
+    upsertStats
 }

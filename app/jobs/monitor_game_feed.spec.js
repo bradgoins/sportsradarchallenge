@@ -2,7 +2,7 @@ const gameFeed = require('./monitor_game_feed');
 const gameData = require('../__mocks__/axios/data/game.json');
 const liveFeedData = require('../__mocks__/axios/data/live_feed.json');
 const boxscoreData = require('../__mocks__/axios/data/boxscore.json');
-const UpsertPlayers = require('../helpers/upsert_players');
+const UpsertGameStats = require('../helpers/upsert_game_stats');
 // const UpdateGameData = require('../helpers/update_game_data');
 const GetGameData = require('../helpers/get_game_data');
 const GetBoxscores = require('../helpers/get_boxscores');
@@ -18,9 +18,9 @@ jest.mock('../db_client', () => {
 });
 jest.mock('axios');
 
-jest.mock('../helpers/upsert_players', () => {
+jest.mock('../helpers/upsert_game_stats', () => {
 	return {
-		upsertPlayers: jest.fn()
+		upsertStats: jest.fn()
 	}
 })
 
@@ -72,16 +72,16 @@ describe('game feed', () => {
 			describe('a couple hours to game time', () => {
 
 				test('waiting to run updates', async () => {
-					jest.spyOn(UpsertPlayers, 'upsertPlayers')
+					jest.spyOn(UpsertGameStats, 'upsertStats')
 	
 					gameFeed.process({...gameData});
 					
 					const intervalLength = 1000;
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(0) // no updates
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(0) // no updates
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(0) // no updates
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(0) // no updates
 
 					// Game is going Live
 					GetGameData.getGameData.mockReturnValue({
@@ -92,13 +92,13 @@ describe('game feed', () => {
 					});
 
 					await jest.advanceTimersByTimeAsync(2*60*60*1000) // move forward 2 hrs
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(4) // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(4) // updates home and away
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(6) // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(6) // updates home and away
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(8) // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(8) // updates home and away
 
 					// Games is over
 					GetGameData.getGameData.mockReturnValue({
@@ -109,17 +109,17 @@ describe('game feed', () => {
 					})
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(10)  // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(10)  // updates home and away
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(10) // no updates
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(10) // no updates
 				})
 			})
 
 			describe('game is already live', () => {
 				
 				test('starts updating right away', async () => {
-					jest.spyOn(UpsertPlayers, 'upsertPlayers')
+					jest.spyOn(UpsertGameStats, 'upsertStats')
 					GetGameData.getGameData.mockReturnValue({
 						...liveFeedData.gameData,
 						status: {
@@ -129,14 +129,14 @@ describe('game feed', () => {
 	
 					gameFeed.process({...gameData});
 					
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(0) // no updates
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(0) // no updates
 
 					const intervalLength = 1000;
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(2) // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(2) // updates home and away
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(4) // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(4) // updates home and away
 
 					// Games is over
 					GetGameData.getGameData.mockReturnValue({
@@ -147,10 +147,10 @@ describe('game feed', () => {
 					})
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(6)  // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(6)  // updates home and away
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(6) // no updates
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(6) // no updates
 
 				})
 			})
@@ -158,7 +158,7 @@ describe('game feed', () => {
 			describe('game has passed', () => {
 
 				test('starts updating right away', async () => {
-					jest.spyOn(UpsertPlayers, 'upsertPlayers')
+					jest.spyOn(UpsertGameStats, 'upsertStats')
 					GetGameData.getGameData.mockReturnValue({
 						...liveFeedData.gameData,
 						status: {
@@ -168,14 +168,14 @@ describe('game feed', () => {
 	
 					gameFeed.process({...gameData});
 
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(0) // no updates
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(0) // no updates
 
 					const intervalLength = 1000;
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(2) // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(2) // updates home and away
 
 					await jest.advanceTimersByTimeAsync(intervalLength) // move forward 1 interval
-					expect(UpsertPlayers.upsertPlayers).toHaveBeenCalledTimes(2) // updates home and away
+					expect(UpsertGameStats.upsertStats).toHaveBeenCalledTimes(2) // updates home and away
 
 				})
 			})
