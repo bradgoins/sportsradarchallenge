@@ -13,5 +13,5 @@ app.listen(port, async () => {
     // run migrations
     await migrate({client}, "migrations");
 
-    // scheduleFeed.process();
+    scheduleFeed.process();
 });
